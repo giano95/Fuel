@@ -193,22 +193,30 @@ struct TestView: View, TimerObserver {
                             isRealesed()
                         }
                 )
-                .padding(.bottom, 180)
             NavigationLink(destination: ActivityView().environmentObject(measure), isActive: $isTestFinish) {}
                 .hidden()
+            
+            // bottom padding
+            HStack {
+                Spacer()
+            }.frame(height: 180)
         }
         .onAppear {
             timer.registerObserver(observer: self)
         }
+        .padding()
+        .background(Color("white"))
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(leading: self.TestCountView, trailing: self.BackButtonView)
     }
 }
 
-struct TestView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            TestView()
-        }
-    }
-}
+//struct TestView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavigationView {
+//            TestView()
+//        }
+//    }
+//}
