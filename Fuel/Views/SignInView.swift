@@ -18,6 +18,13 @@ struct SignInView: View {
     @State var error = ""
     @EnvironmentObject var session: SessionStore
     
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    var backButton: some View {
+        Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
+            Image("icon_arrow_backward")
+        }
+    }
     
     func signIn() {
         session.signIn(email: email, password: password) {
@@ -31,25 +38,46 @@ struct SignInView: View {
     }
     
     var body: some View {
+        
         VStack {
+            
+            // top padding
+            HStack {
+                Spacer()
+            }.frame(height: 100)
+            
             Text("Welcome Back!")
                 .fontWeight(.black)
                 .font(.custom("Rubik-Medium", size: 30.0, relativeTo: .headline))
                 .foregroundColor(Color("dark"))
                 .padding(.bottom, 10)
             TextField("Email", text: $email)
+                .placeholder(when: email.isEmpty) {
+                    Text("Email").foregroundColor(Color("lighter_slate"))
+                }
                 .padding()
-                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("slate"), lineWidth: 3)
+                )
                 .padding(.bottom, 10)
+                .foregroundColor(Color("dark"))
             SecureField("Password", text: $password)
+                .placeholder(when: password.isEmpty) {
+                    Text("Password").foregroundColor(Color("lighter_slate"))
+                }
                 .padding()
-                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: 2)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("slate"), lineWidth: 3)
+                )
                 .padding(.bottom, 10)
+                .foregroundColor(Color("dark"))
             Button(action: { signIn() }, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10.0, style: .continuous)
                         .fill(Color("slate"))
-                        .frame(maxWidth: .infinity, maxHeight: 60)
+                        .frame(width: .infinity, height: 60)
                     Text("Sign in")
                         .foregroundColor(.white)
                         .fontWeight(.bold)
@@ -60,6 +88,9 @@ struct SignInView: View {
             
             if error != "" {
                 Text(error)
+                .fontWeight(.black)
+                .font(.custom("Rubik-Medium", size: 20.0, relativeTo: .headline))
+                .foregroundColor(Color("red_error"))
             }
 
             NavigationLink(destination: PasswordResetView()) {
@@ -93,6 +124,11 @@ struct SignInView: View {
         }
         .onAppear(perform: { session.setUpGID() })
         .padding()
+        .background(Color("white"))
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: self.backButton)
     }
 }
 
