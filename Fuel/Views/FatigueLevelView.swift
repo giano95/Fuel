@@ -119,11 +119,15 @@ struct FatigueLevelView: View {
         
         VStack {
             
+            // for white background & top padding
+            HStack {
+                Spacer()
+            }.frame(height: 150)
+            
             Text("My fatigue is...")
                 .fontWeight(.heavy)
                 .font(.custom("Rubik-Medium", size: 28.0, relativeTo: .headline))
                 .foregroundColor(Color("dark"))
-                .padding(.top, 150)
                 .padding(.bottom, 50)
             FatigueSlider
             Text(fatigueTitles[fatigueLevel]!)
@@ -155,6 +159,7 @@ struct FatigueLevelView: View {
             Spacer()
         }
         .padding(.horizontal, 30)
+        .background(Color("white"))
         .edgesIgnoringSafeArea(.top)
         .edgesIgnoringSafeArea(.bottom)
         .navigationBarBackButtonHidden(true)
