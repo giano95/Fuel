@@ -1,5 +1,5 @@
 //
-//  SignInView.swift
+//  AuthView.swift
 //  Fuel
 //
 //  Created by Marco Gianelli on 19/04/2021.
@@ -19,6 +19,12 @@ struct AuthView: View {
     var body: some View {
         
         VStack {
+            
+            // top padding
+            HStack {
+                Spacer()
+            }.frame(height: 100)
+            
             GeometryReader { geometry in
                 ImageCarouselView(
                     numberOfImages: 5,
@@ -45,7 +51,7 @@ struct AuthView: View {
                     }
                 )
             }
-            .frame(width: UIScreen.main.bounds.width, height: 280, alignment: .top)
+            .frame(width: UIScreen.main.bounds.width, height: 260, alignment: .top)
             Spacer()
             NavigationLink(destination: SignUpView().environmentObject(SessionStore.shared)) {
                 ZStack {
@@ -74,7 +80,9 @@ struct AuthView: View {
         }
         .navigationBarTitle("")
         .navigationBarHidden(true)
+        .background(Color("white"))
         .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
     }
 }
 
