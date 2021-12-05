@@ -80,15 +80,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             
             SessionStore.shared.user?.name = name
             
-            Firestore.firestore().collection("users").document(uid).setData([
-                "id": uid,
-                "name": name
-            ], merge: true) { (error) in
-                if let error = error {
-                    print("an error occur while saving the user database info")
-                    print(error.localizedDescription)
-                }
-            }
+            // Save the user data accordingly to the database tree
+            Database.database(url: "https://fuel-d0b5e-default-rtdb.europe-west1.firebasedatabase.app").reference()
+                .child("users")
+                .child(uid)
+                .setValue(["name": name])
         }
         	
     }
