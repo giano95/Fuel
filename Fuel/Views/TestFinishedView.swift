@@ -27,6 +27,11 @@ struct TestFinishedView: View {
         
         VStack {
             
+            // for white background & top padding
+            HStack {
+                Spacer()
+            }.frame(height: 160)
+            
             Text("Thank you for your help! See you later")
                 .fontWeight(.heavy)
                 .font(.custom("Rubik-Medium", size: 27.0, relativeTo: .headline))
@@ -34,7 +39,6 @@ struct TestFinishedView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 40)
-                .padding(.top, 160)
             Image("illustration_demo_05")
                 .resizable()
                 .scaledToFill()
@@ -43,6 +47,7 @@ struct TestFinishedView: View {
                 .padding(.top, 40)
             Spacer()
         }
+        .background(Color("white"))
         .edgesIgnoringSafeArea(.top)
         .edgesIgnoringSafeArea(.bottom)
         .navigationBarBackButtonHidden(true)
