@@ -19,6 +19,14 @@ struct SignUpView: View {
     @State var error = ""
     @EnvironmentObject var session: SessionStore
     
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    
+    var backButton: some View {
+        Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
+            Image("icon_arrow_backward")
+        }
+    }
+    
     func signUp() {
         session.signUp(email: email, password: password) {
             (result, error) in
@@ -31,18 +39,6 @@ struct SignUpView: View {
                 
                 let uid = String(result!.user.uid)
                 
-//                Firestore.firestore()
-//                    .collection("users")
-//                    .document(uid)
-//                    .setData([
-//                        "id": uid,
-//                        "name": name
-//                    ]) { (error) in
-//                    if let error = error {
-//                        print("an error occur while saving the user database info")
-//                        print(error.localizedDescription)
-//                    }
-//                }
                 // Save the user data accordingly to the database tree
                 Database.database(url: "https://fuel-d0b5e-default-rtdb.europe-west1.firebasedatabase.app").reference()
                     .child("users")
@@ -54,29 +50,57 @@ struct SignUpView: View {
    
     
     var body: some View {
+        
         VStack {
+            
+            // top padding
+            HStack {
+                Spacer()
+            }.frame( height: 100)
+            
             Text("Thank you for your help!")
                 .fontWeight(.black)
                 .font(.custom("Rubik-Medium", size: 30.0, relativeTo: .headline))
                 .foregroundColor(Color("dark"))
-                .padding(.bottom, 10)
-            TextField("Name", text: $name)
+                .padding(.bottom, 12)
+            TextField("", text: $name)
+                .placeholder(when: name.isEmpty) {
+                    Text("Name").foregroundColor(Color("lighter_slate"))
+                }
                 .padding()
-                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: 2)
-                .padding(.bottom, 10)
-            TextField("Email", text: $email)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("slate"), lineWidth: 3)
+                )
+                .padding(.bottom, 12)
+                .foregroundColor(Color("dark"))
+            TextField("", text: $email)
+                .placeholder(when: name.isEmpty) {
+                    Text("Email").foregroundColor(Color("lighter_slate"))
+                }
                 .padding()
-                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: 2)
-                .padding(.bottom, 10)
-            SecureField("Password", text: $password)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("slate"), lineWidth: 3)
+                )
+                .padding(.bottom, 12)
+                .foregroundColor(Color("dark"))
+            SecureField("", text: $password)
+                .placeholder(when: name.isEmpty) {
+                    Text("Password").foregroundColor(Color("lighter_slate"))
+                }
                 .padding()
-                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: 2)
-                .padding(.bottom, 10)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color("slate"), lineWidth: 3)
+                )
+                .padding(.bottom, 12)
+                .foregroundColor(Color("dark"))
             Button(action: { signUp() }, label: {
                 ZStack {
                     RoundedRectangle(cornerRadius: 10.0, style: .continuous)
                         .fill(Color("slate"))
-                        .frame(maxWidth: .infinity, maxHeight: 60)
+                        .frame(width: .infinity, height: 60)
                     Text("Sign up")
                         .foregroundColor(.white)
                         .fontWeight(.bold)
@@ -86,31 +110,57 @@ struct SignUpView: View {
             })
             if error != "" {
                 Text(error)
+                .fontWeight(.black)
+                .font(.custom("Rubik-Medium", size: 20.0, relativeTo: .headline))
+                .foregroundColor(Color("red_error"))
             }
             Text("- or sign up with -")
                 .font(.custom("Rubik-Regular", size: 20.0, relativeTo: .body))
                 .foregroundColor(Color("slate"))
                 .padding(.bottom, 30)
             HStack {
+                Spacer()
                 Button(action: { session.googleSignUp() }, label: {
                     ZStack {
                         Image("bkg_google")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 95, height: 95)
+                            .clipped()
                         Image("icon_google")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 40, height: 40)
+                            .clipped()
                     }
                 })
-                .padding(.horizontal, 10)
+                .padding(.horizontal, 12)
                 Button(action: { session.facebookSignUp() }, label: {
                     ZStack {
                         Image("bkg_facebook")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 95, height: 95)
+                            .clipped()
                         Image("icon_facebook")
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 40, height: 40)
+                            .clipped()
                     }
                 })
-                .padding(.horizontal, 10)
+                .padding(.horizontal, 12)
+                Spacer()
             }
             Spacer()
         }
         .onAppear(perform: { session.setUpGID() })
         .padding()
+        .background(Color("white"))
+        .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarItems(leading: self.backButton)
     }
 }
 
