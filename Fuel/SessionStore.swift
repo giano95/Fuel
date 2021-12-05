@@ -17,7 +17,11 @@ class SessionStore: ObservableObject {
     
     static let shared = SessionStore()
     
-    private init() {}
+    var ref: DatabaseReference!
+    
+    private init() {
+        ref = Database.database(url: "https://fuel-d0b5e-default-rtdb.europe-west1.firebasedatabase.app").reference()
+    }
     
     var didChange = PassthroughSubject<SessionStore, Never>()
     var handle: AuthStateDidChangeListenerHandle?
@@ -29,7 +33,35 @@ class SessionStore: ObservableObject {
     func listen () {
         handle = Auth.auth().addStateDidChangeListener({ (auth, user) in
             if let user = user {
-                self.user = User(uid: user.uid, email: user.email, name: user.displayName)
+                
+                self.user = User(uid: user.uid, email: user.email)
+                
+                self.ref.child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                    
+                    let value = snapshot.value as? NSDictionary
+                    
+                    // Check if the User have the parameters on the DB
+                    if value?["name"] != nil {
+                        self.user?.name = value?["name"] as? String
+                    }
+                    if value?["sex"] != nil {
+                        self.user?.toggleRegistred()    // If the user have this par then is registred
+                        self.user?.sex = value?["sex"] as? String
+                    }
+                    if value?["age"] != nil {
+                        self.user?.age = value?["age"] as? Int
+                    }
+                    if value?["weight"] != nil {
+                        self.user?.weight = value?["weight"] as? Float
+                    }
+                    if value?["height"] != nil {
+                        self.user?.height = value?["height"] as? Float
+                    }
+                    if value?["patientType"] != nil {
+                        self.user?.patientType = value?["patientType"] as? String
+                    }
+                    
+                })
             } else {
                 self.user = nil
             }
@@ -49,7 +81,6 @@ class SessionStore: ObservableObject {
     }
     
     func facebookSignUp() {
-        
         manager.logIn(permissions: ["public_profile", "email"], from: nil) {
             (result, error) in
             
@@ -77,15 +108,11 @@ class SessionStore: ObservableObject {
                         let uid = String(result!.user.uid)
                         let name = String(result!.user.displayName ?? "missing__name")
                         
-                        Firestore.firestore().collection("users").document(uid).setData([
-                            "id": uid,
-                            "name": name
-                        ], merge: true) { (error) in
-                            if let error = error {
-                                print("an error occur while saving the user database info")
-                                print(error.localizedDescription)
-                            }
-                        }
+                        // Save the user data accordingly to the database tree
+                        Database.database(url: "https://fuel-d0b5e-default-rtdb.europe-west1.firebasedatabase.app").reference()
+                            .child("users")
+                            .child(uid)
+                            .setValue(["name": name])
                     }
                 }
             }
@@ -162,13 +189,42 @@ class SessionStore: ObservableObject {
 }
 
 struct User {
+    
+    var isRegistred: Bool
+    
+    // From the SignUp View
     var uid: String
     var email: String?
     var name: String?
+    // From the registration View
+    var sex: String?
+    var age: Int?
+    var weight: Float?
+    var height: Float?
+    var patientType: String?
     
-    init(uid: String, email: String?, name: String? = nil) {
+    init(uid: String, email: String?) {
+        self.uid = uid
+        self.email = email
+        self.isRegistred = false
+    }
+    init(uid: String, email: String?, name: String?) {
         self.uid = uid
         self.email = email
         self.name = name
+        self.isRegistred = false
     }
+    init(uid: String, email: String?, name: String?, sex: String?, age: Int?, weight: Float?, height: Float?, patientType: String?) {
+        self.uid = uid
+        self.email = email
+        self.name = name
+        self.sex = sex
+        self.age = age
+        self.weight = weight
+        self.height = height
+        self.patientType = patientType
+        self.isRegistred = true
+    }
+    
+    mutating func toggleRegistred() {self.isRegistred = !self.isRegistred}
 }
