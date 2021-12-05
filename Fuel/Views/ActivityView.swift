@@ -18,7 +18,9 @@ struct ActivityView: View {
     // for override the back button
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     var BackButtonView: some View {
-        Button(action: { self.presentationMode.wrappedValue.dismiss() }) {
+        Button(action: {
+            self.presentationMode.wrappedValue.dismiss()
+        }) {
             Image("icon_close")
         }
         .padding(.horizontal, 5)
@@ -32,6 +34,11 @@ struct ActivityView: View {
     var body: some View {
         
         VStack() {
+            
+            // for white background
+            HStack {
+                Spacer()
+            }.frame(height: 1)
             
             Spacer()
             
@@ -213,14 +220,17 @@ struct ActivityView: View {
                 })
                 
                 // Hidden NavLink
-                NavigationLink(destination: FatigueLevelView().environmentObject(measure), isActive: $isSet) {}
-                    .hidden()
+                NavigationLink(
+                    destination: FatigueLevelView().environmentObject(measure),
+                    isActive: $isSet
+                ) {}.hidden()
             }
             Spacer()
         }
-        .padding(.horizontal, 15)
-        .edgesIgnoringSafeArea(.top)
+        .padding()
+        .background(Color("white"))
         .edgesIgnoringSafeArea(.bottom)
+        .edgesIgnoringSafeArea(.top)
         .navigationBarBackButtonHidden(true)
         .navigationBarItems(trailing: self.BackButtonView)
     }
