@@ -107,7 +107,7 @@ struct ImageCarousel_Previews: PreviewProvider {
                     }
                 )
             }
-            .frame(width: UIScreen.main.bounds.width, height: 280, alignment: .top)
+            .frame(width: UIScreen.main.bounds.width, height: 260, alignment: .top)
             Spacer()
         }
     }
