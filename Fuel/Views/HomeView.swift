@@ -26,8 +26,9 @@ struct HomeView: View {
         NavigationView {
             
             Group {
-             
-                if session.user != nil && Auth.auth().currentUser != nil {
+                
+                // User fully authenticathed
+                if session.user != nil && Auth.auth().currentUser != nil && session.user?.isRegistred == true {
                 
                     if let user = session.user {
 
@@ -178,12 +179,17 @@ struct HomeView: View {
                         .edgesIgnoringSafeArea(.top)
                         .edgesIgnoringSafeArea(.bottom)
                     }
+                    
+                // User authenticated but not registred
+                } else if session.user != nil && Auth.auth().currentUser != nil && session.user?.isRegistred == false {
+                    RegistrationView().environmentObject(SessionStore.shared)
+                // User not autheticated at all
                 } else {
                     AuthView().environmentObject(SessionStore.shared)
                 }
             }
-            .onAppear(perform: getUser)
         }
+        .onAppear(perform: getUser)
     }
 }
 
